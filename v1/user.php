@@ -33,11 +33,12 @@ switch ($metodo){
 // Validaciones de los campos
 function validations($dni, $name, $phone, $email) {
     // Validación del DNI
-    if(!is_numeric($dni) || strlen($dni) != 8){
+    if(!is_numeric($dni) || strlen($dni) != 8 || $dni == '00000000'){
         http_response_code(400);
-        echo json_encode(array("message" => "El DNI debe ser un número de 8 dígitos"));
+        echo json_encode(array("message" => "DNI debe ser números de 8 dígitos y no solo ceros"));
         return false;
     }
+
 
     // Validación del nombre
     if(!ctype_alpha(str_replace(' ', '', $name))){
@@ -98,6 +99,15 @@ function insert($conexion) {
     $phone = $dato['phone'];
     $email = $dato['email'];
 
+    // Validar si el DNI ya existe
+    $sql = "SELECT * FROM users WHERE dni = '$dni'";
+    $resultado = $conexion->query($sql);
+    if($resultado->num_rows > 0){
+        http_response_code(400);
+        echo json_encode(array("message" => "El DNI ya existe"));
+        return;
+    }
+
     if(!validations($dni, $name, $phone, $email)){
         return;
     }
@@ -108,8 +118,11 @@ function insert($conexion) {
     $resultado = $conexion->query($sql);
 
     if ($resultado){
-        $dato['id'] = $conexion->insert_id;
-        echo json_encode($dato);
+        //Devolver el objeto registrado
+        //$dato['id'] = $conexion->insert_id;
+        //echo json_encode($dato);
+        //Devolver un mensaje de registro
+        echo json_encode(array('message' => 'User registered successfully'));
     }else{
         echo json_encode(array('error' => 'Error al insertar el user'));
     }
@@ -142,7 +155,7 @@ function update($conexion, $id) {
     if(!validations($dni, $name, $phone, $email)){
         return;
     }
-
+    //El dni se edite o no se gurda normal, no se controla
     $sql = "UPDATE users SET dni= '$dni',name= '$name',phone= '$phone',email= '$email' 
             WHERE id = $id";
 

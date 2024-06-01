@@ -2,6 +2,6 @@
 
 CRUD completo para una API Rest:
 
-- API desarrollada con la version de PHP 8.0.0 (cli)
+- API desarrollada con la version de PHP 8.2.0 (cli) - Xampp
 
 No hay templates HTML alguno, solo es una API para BackEnd
